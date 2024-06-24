@@ -313,7 +313,7 @@ Yollardan biri şu, fonksiyonun tanımını başlık dosyasına inline anahtar s
 
 
 
-Bir yolu daha var. 
+
 
 Inline fonksiyon mu ? evet. Ama inline yok ? olsun. 
 Dilin kuralı diyor ki, eğer siz bir sınıfın static veya non static member function’unu tanımını sınıf içinde yaparsınız implicit inline yapmış oluyorsunuz. 
@@ -330,11 +330,83 @@ Inline fonksiyon mu ? hayır.
 ODR ihlaline yol açar mı ? açar. 
 Birden fazla kaynak dosya bu başlık dosyasını include ettiğinde ODR ihlaline yol açar. 
 
-ODR ihlaline yol açar mı ? Hayır. Çünkü constexpr fonksiyonlar örtülü olarak inline. Yazmış gibi muamele görecek. Constexpr fonksiyonları başlık dosyasına koymamız ODR’ı ihlal etmez. 
+```C++
+constexpr int foo(int x, int y)
+{
+	return x * x + y * y;
+}
+```
+
+ODR ihlaline yol açar mı ? Hayır. Çünkü constexpr fonksiyonlar örtülüolarak inline (implicitly inline). Yazmış gibi muamele görecek. Constexpr fonksiyonları başlık dosyasına koymamız ODR’ı ihlal etmez. 
 
 Başlık dosyasına inline fonksiyonların tanımlarını koyabilirim. Çoğu zaman kütüphaneler de member functionlar da olacak global fonksiyonlar da olacak. 
 
-Her 2 fonksiyon dainline. 
+```C++
+class Myclass {
+public:
+	void set(int a, int b);
+private:
+	int mx, my;
+};
+Sınıfların üye fonksiyonlarını da inline yapabilir miyim ? Evet, kesinlikle. Inline expansion'a en uygun olanlar neredeyse sınıfların üye fonksiyonları. Neredeyse bir garanti. Çoğu zaman one liner olan kodlar.
+Bu tür kodları kendi irademle inline expansion yapmak istiyorum. Bunu yapmanın bir yolu şu;
+* Fonksiyonun tanımını başlık dosyasına inline anahtar sözcüğü ile yazacaksınız.
+
+Diğer yol ise; fonksiyon tanımını direkt üye fonksiyon içerisine koymak.
+```C++
+class Myclass {
+public:
+	void set(int a, int b)
+{
+	mx = a;
+	my = b;
+}
+
+private:
+	int mx, my;
+};
+Myclass sınıfının set fonksiyonu bir inline fonksiyon.
+Dilin kuralı diyor ki, eğer siz bir sınıfın static veya non static member functionunın tanımını sınıf içerisinde yaparsanız siz bu fonksiyonu implicitly inline yapmış oluyorsunuz. 
+
+
+
+
+
+
+
+
+
+```C++
+class Myclass {
+public:
+	void set(int x)
+	{
+		mx = x;
+	}
+
+	int get()const
+	{
+		return mx;
+	}
+private:
+	int mx;
+};
+
+bool is_equal(const Myclass& m1, const Myclass& m2)
+{
+	return  m1.get() == m2.get();
+}
+```
+ODR çiğnenir mi ? evet. Kesinlikle böyle bir şey yapma. 
+
+```
+inline bool is_equal(const Myclass& m1, const Myclass& m2)
+{
+	return  m1.get() == m2.get();
+}
+```
+Böyle olsaydı ODR çiğnenmeyecekti
+
 
 
 Üye fonksiyonların sınıfların içinde tanımlanması —> inline fonksiyon
