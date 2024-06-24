@@ -232,10 +232,10 @@ Sonuç olarka inline fonksiyonlar:
 * Derleyiciye inline optimizasyon yapma imkanı sağlayan ama buna mecbur bırakmayan fonksiyonlardır. 
 
 Bu optimizasyonu yapıp yapmadığını assembly koddan anlayabiliriz. 
-
-Dezavantajları da olabilir.
-* Fonksiyonun tanımı tamamen görülüyor.
-* Return değeri olarak user defined tür kullanırsak, bu türlere ilişkin bildirimleri de derleyicinin görmesi lazım. Bu durumda fazladan başlık dosyası include etmek gerekebilir. 
+ 
+İnline fonksiyonların negatif tarafları ? kişinin inline fonksiyonu kullanmamak istememe  nedenleri; 
+Kodu ifşa etmiş oluyorum. (expose etmiş oluyorum) 
+Kodu herkese göstermiş oluyorum. Algoritmamı kimseye göstermek istemiyorum ama fonksiyonu inline yapıyorum. Eee nasıl göstermeyeceksin o zaman. O kodu herkes görecek. Saklama imkanı yok. Gizleme şansı yok. Endişe noktalarından biri bu olabilir. 
 
 
 Başlık dosyasına bir fonksiyonun inline fonksiyon olarak tanımını koyarsam ODR’ı ihlal etmemiş oluyorum. 
