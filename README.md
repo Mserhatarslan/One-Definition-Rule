@@ -15,7 +15,7 @@ Neler ODR’a tabii ?
 
   
 Aynı kaynak dosyada aynı 2 tanım sentaks hatası, farklı kaynak dosyalarda aynı varlığın birden fazla tanımı doğrudan undefined behavior.
-Eğer inline keywordünü yazarsak inline statüsüne girer yani link aşamasında linker bundan sadece 1 tane görecek ve ODR bozulmayacak
+Eğer inline keywordünü yazarsak inline statüsüne girer yani link aşamasında linker bundan sadece 1 tane görecek ve ODR bozulmayacak.
 Non-inline fonksiyonlar ve değişkenler, program genelinde tek bir tanıma sahip olmalıdır.
 Inline fonksiyonlar ve değişkenler, birden fazla çeviri biriminde tanımlanabilir, ancak her tanımın aynı olması gerekir. (Token by token) 
 
@@ -25,6 +25,7 @@ inline anahtar kelimesi, ODR'yi esneterek, farklı çeviri birimlerinde aynı ta
 Bir inline fonksiyon, bir başlık dosyasında tanımlanabilir ve bu başlık dosyası farklı kaynak dosyalarına dahil edilse bile ODR'yi ihlal etmez.
 Her inline fonksiyon tanımının aynı olması gerekir, böylece bağlayıcı (linker) bu tanımları aynı varlık olarak kabul eder.
 Inline anahtar kelimesinin derleyiciye fonksiyonu inline etme (fonksiyon çağrısını fonksiyon koduyla değiştirme) önerisinde bulunduğunu, ancak esas amacının farklı çeviri birimlerinde aynı tanımlara sahip olmayı sağlamak olduğunu vurgular.
+
 //.h
 ```C++
 
@@ -58,7 +59,7 @@ void foo(int x){}
 ```
 
 Ill-formed dur. 
-Ama bakın böyle bir şey yaparsam ne olurun sorusu compile time’da hata alırız olamaz ki. Derleyicinin çeviri birimi kaynak dosya(translation unit). 
+Ama böyle bir şey yaparsam ne olur sorusunun cevabı compile time’da hata alırız olamaz ki. Derleyicinin çeviri birimi kaynak dosya(translation unit). 
 Derleyici furkan.cpp yi ayrı derliyor bora.cpp yi ayrı derliyor. 
 Dolayısıyla birden fazla kaynak dosyada birden fazla fonksiyonun tanımının bulunması bir sentaks hatası değil ama ill-formed. Linker bir hata verebilir fakat bazı durumlarda linker’da vermeyebilir. 
 
