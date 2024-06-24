@@ -331,7 +331,7 @@ Sınıfların üye fonksiyonlarını da inline yapabilir miyim ? Evet, kesinlikl
 Bu tür kodları kendi irademle inline expansion yapmak istiyorum. Bunu yapmanın bir yolu şu;
 * Fonksiyonun tanımını başlık dosyasına inline anahtar sözcüğü ile yazacaksınız.
 
-Diğer yol ise; fonksiyon tanımını direkt üye fonksiyon içerisine koymak.
+Diğer yol ise; fonksiyon tanımını direkt üye fonksiyon içerisine koymak. Fonksiyonu doğrudan sınıfın içinde tanımlamak. 
 ```C++
 class Myclass {
 public:
@@ -371,7 +371,7 @@ bool is_equal(const Myclass& m1, const Myclass& m2)
 	return  m1.get() == m2.get();
 }
 ```
-ODR çiğnenir mi ? evet. Kesinlikle böyle bir şey yapma. 
+ODR çiğnenir mi ? Evet. Kesinlikle böyle bir şey yapma. 
 
 ```
 inline bool is_equal(const Myclass& m1, const Myclass& m2)
@@ -385,10 +385,24 @@ Böyle olsaydı ODR çiğnenmeyecekti
 
 Üye fonksiyonların sınıfların içinde tanımlanması —> inline fonksiyon
 
-Fonksiyonun static olması implicit inline olduğu anlamına gelmiyor. Ama ODR’ı ihlal etmiyor. 
+Fonksiyonun static olması implicitly inline olduğu anlamına gelmiyor. Ama ODR’ı ihlal etmiyor. 
 
-
-
-ODR ihlali olur mu ? Hayır. Çünkü bu internal linkage’ ait. 
-Static olması durumunda; bu kaynak dosyayı include eden her kaynak dosyada ayrı bir foo fonksiyonu olacak. Caner.cpp bu foo fonksiyonun adresini kullansa, ahmet.cpp’de bu foo fonksiyonunun adresini kullansa bunlar ayrı adresler olacak. 
+// header file
+```C++
+static int foo(int x, int y)
+{
+	return x * x + y * y;
+}
+```
+Başlık dosyasına böyle bir fonksiyonun tanımını koymam ODR ihlali olur mu ? Hayır, çünkü bu internal linkage'a ait. 
+O zaman aşağıdaki gibi yazmamda bir sorun olur mu ? 
+```C++
+inline int foo(int x, int y)
+{
+	return x * x + y * y;
+}
+```
+Sorun olur tabiki de. Böyle yazarsanız static keyword'ü ile yazarsanız bu başlık dosyasını include eden her kaynak dosyada ayrı bir foo fonksiyonu olacak. Adresleri farklı olacak. 
+Static olması durumunda; bu kaynak dosyayı include eden her kaynak dosyada ayrı bir foo fonksiyonu olacak. Caner.cpp bu foo fonksiyonun adresini kullansa, ahmet.cpp’de bu foo fonksiyonunun adresini kullansa bunlar ayrı adresler olacak.
+ODR'ın ihlal edilmemesi ayrı bir konu inline olması ayrı bir konu. 
 
