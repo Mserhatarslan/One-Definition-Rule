@@ -156,16 +156,17 @@ inline optimizasyon, compiler optimization^un en önemli bileşeni. En önemlisi
 
 Derleyici bu optimizasyonu yapmasa maliyet artar. 
 Zero cost abstraction ağırlıklı olarak inline expansion’a dayanıyor. 
-inline expansionu disable edebilirsiniz. Bunların switchleri var. Debug sürecinde bir optimizasyonları disable etmeyi tercih ederiz. 
+inline expansionu disable edebilirsiniz. Bunların switchleri var. Debug sürecinde belirli optimizasyonları disable etmeyi tercih ederiz. 
 
 Derleyicinin bu inline expansion dediğimiz optimizasyonu yapması hangi kriterlere bağlı ?
-* Derleyicinin bunu yapmaktan bir fayda göreceğini bilmesi gerekiyor. Derleyici bir analiz yapıyor. 
-* Bazı inline expansion durumları derleyiciden derleyiciye değişiyor. Yani derleyiciye bağlı
-* Derleyici switchleri (neyi hedefliyorsunuz, code size ? zero optimization ?)
-* Derleyicinin kodu görmesi gerekir. 
+* Derleyicinin bunu yapmaktan bir fayda göreceğini bilmesi gerekiyor. Derleyici bir analiz yapıyor. Her fonksiyon çağrısının inline expand edilmesi avantaj getirmeyebilir. 
+* Bazı inline expansion durumları derleyiciden derleyiciye değişiyor. Yani derleyiciye bağlı.
+* Derleyici switchleri (Optimizasyonda neyi hedefliyorsunuz, code size ? zero optimization ?)
+* Derleyicinin kodu görmesi gerekir. (Olmazsa olmaz bir koşul)
 
-Clang derleyici inline expansion optimizasyonu yapmış ama gcc derleyicisi yapamamış. Bu olabilir mi ? olabilir derleyicinin muktedir olması lazım. Derleyiciyi implemente edenlerin başarısı. 
-Mesela recursive bazı yapıları bazı derleyiciler inline expand edebiliyor ama bazılarının gücü yetmiyor. 
+Clang derleyici inline expansion optimizasyonu yapmış ama gcc derleyicisi yapamamış. Bu olabilir mi ? Olabilir.
+Derleyicinin muktedir olması lazım. Derleyiciyi implemente edenlerin başarısı. 
+Mesela recursive bazı yapıları bazı derleyiciler inline expand edebiliyor ama bazılarının gücü yetmiyor. NRVO optimizasyonunda Clang gcc'den daha başarılı. 
 
 Derleyici birçok durumda olduğu gibi fonksiyonun sadece bildirimi görseydi nereden bilsin ki inline expansion yapıp yapmayacağını ? fonksiyonun tanımını görmüyor. Fonksiyonun kodunu görmesi gerekiyor ama. 
 
@@ -183,11 +184,11 @@ inline int  foo(int x, int y)
 
 Inline anahtar sözcüğünü koyduğumuzda derleyici inline expansion yapması ricasında bulunmuş oluyorum. 
 
-Bu doğru değil. Yanlış .
+Bu doğru değil. Kesinlikle yanlış.
 
 Fonksiyonu inline yapmanız veya yapmamanız derleyicinin inline expansion yapması üzerinde kesinlikle hiçbir belirleyiciliği yok. 
 
-inline function ODR ile ilgili. Derleyicinin inline enpansion olanağını elde etmesi için fonksiyonun kodunu görmesi gerekir değil mi ? aksi mümkün değil. 
+Inline function ODR ile ilgili. Derleyicinin inline expansion olanağını elde etmesi için fonksiyonun kodunu görmesi gerekir değil mi ? Aksi mümkün değil. 
 
 Undefined behaviorun temel sebeplerinden biri compiler optimization'dur. Compilerın tek talebi kodda undefined behavior olmaması. 
 
@@ -198,24 +199,23 @@ Bunu kaç kaynak dosya include ederse etsin func fonksiyonu hepsinde olacak ama 
 Böylece bir inline fonksiyonunu başlı dosyasına koyarak
 * Tanımsız davranış engelleniyor.
 * Derleyiciye inline optimizasyon yapma seçeneği sunuyoruz. 
-BÖYLECE BİR İNLİNE FONKSİYONUNU BAŞLIK DOSYASINA KOYARAK
 
-Sonuç olarka inline fonksiyonlar:
+Sonuç olarak inline fonksiyonlar:
 * Tipik olarak başlık dosyasında tanımlanan
 * ODR ihlali yapmayan
 * Derleyiciye inline optimizasyon yapma imkanı sağlayan ama buna mecbur bırakmayan fonksiyonlardır. 
 
 Bu optimizasyonu yapıp yapmadığını assembly koddan anlayabiliriz. 
  
-İnline fonksiyonların negatif tarafları ? kişinin inline fonksiyonu kullanmamak istememe  nedenleri; 
-Kodu ifşa etmiş oluyorum. (expose etmiş oluyorum) 
-Kodu herkese göstermiş oluyorum. Algoritmamı kimseye göstermek istemiyorum ama fonksiyonu inline yapıyorum. Eee nasıl göstermeyeceksin o zaman. O kodu herkes görecek. Saklama imkanı yok. Gizleme şansı yok. Endişe noktalarından biri bu olabilir. 
+İnline fonksiyonların negatif tarafları ? Kişinin inline fonksiyonu kullanmamak istememe  nedenleri; 
+
+* Kodu ifşa etmiş oluyorum(expose etmiş oluyorum).Kodu herkese göstermiş oluyorum. Algoritmamı kimseye göstermek istemiyorum ama fonksiyonu inline yapıyorum. Eee nasıl göstermeyeceksin o zaman. O kodu herkes görecek. Saklama imkanı yok. Gizleme şansı yok. Endişe noktalarından biri bu olabilir. 
 
 
 Başlık dosyasına bir fonksiyonun inline fonksiyon olarak tanımını koyarsam ODR’ı ihlal etmemiş oluyorum. 
 External bir fonksiyonun tanımını başlık dosyasına koymanın yolu o fonksiyonu inline yapmak. Bu durumda ODR’ı ihlal etmemiş oluyoruz. Bu  başlık dosyasını include eden kodları derleyecek derleyiciye inline expansion optimizasyonu şansı veriyoruz. Bu şans kullanılmadığında isterse 100 tane kaynak dosya include etmiş olsun sentaks hatası olmayacak. 
 
-Peki ya inline etmezse ? dil bunu garanti ediyor. Kayıttan dinleyip yaz. 
+Peki ya inline etmezse ? dil bunu garanti ediyor. 
 
 
 Sınıfların üye fonksiyonlarını da inline yapabilirim. Inline expensina en uygun olan sınıfın üye fonksiyonları. Kodu küçük, one liner fonksiyonlar. 
