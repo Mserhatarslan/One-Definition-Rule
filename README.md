@@ -1,9 +1,10 @@
 # One-Definition-Rule
 
 C++ dilinde "One Definition Rule" (ODR) olarak bilinen kural, bir programda her bir nesnenin, fonksiyonun, sınıfın, şablonun ve inline fonksiyonun yalnızca bir tanımının olması gerektiğini belirtir. 
-ODR'nin amacı, belirsizlikleri ve çakışmaları önleyerek programın tutarlılığını ve daha doğru çalışmasını sağlamaktır. Yazılımsal bazı varlıkların proje içinde  birden fazla bildirimi olabilir ama bir tanımlaması olması gerekir. Tek bir tanımlaması olması zorunludur. 
+ODR'nin amacı, belirsizlikleri ve çakışmaları önleyerek programın tutarlılığını ve daha doğru çalışmasını sağlamaktır. 
+Yazılımsal bazı varlıkların proje içinde birden fazla bildirimi olabilir ancak bir tanımlaması olması gerekir. Tek bir tanımlaması olması zorunludur. 
 
-C++ standartlarının da  kullandığı bir terimdir.
+C++ standartlarının da kullandığı bir terimdir.
 
 Neler ODR’a tabii ?
 
@@ -13,7 +14,8 @@ Neler ODR’a tabii ?
 * Enum Türleri
 * Şablonlar
 
-  
+
+
 Aynı kaynak dosyada aynı 2 tanım sentaks hatası, farklı kaynak dosyalarda aynı varlığın birden fazla tanımı doğrudan undefined behavior.
 Eğer inline keywordünü yazarsak inline statüsüne girer yani link aşamasında linker bundan sadece 1 tane görecek ve ODR bozulmayacak.
 Non-inline fonksiyonlar ve değişkenler, program genelinde tek bir tanıma sahip olmalıdır.
@@ -45,14 +47,14 @@ void func(int x)
 
 Projede 2 tane ayrı func fonksiyonu olabilir mi ? Hayır. 2 tane ayrı func fonksiyonunun olması duruma göre sentaks hatası olabilir duruma göre olmayabilir ama her halükarda ill-formed’dur. 
 
-Sentaks hatası dendiğinde kastedilen derleyicinin compilation sürecinde diagnostic verebildiği durumlardardır. İll-formed bunun üstünde bir kavram. İll formed olması sonuçta dilin kurallarına aykırı yine ama sentaks hatası biçiminde derleyicinin bir diagnostic verme zorunluluğu yok. 
-
+Sentaks hatası dendiğinde kastedilen derleyicinin compilation sürecinde diagnostic verebildiği durumlardardır. İll-formed bunun üstünde bir kavram. İll formed olması sonuçta dilin kurallarına aykırı yine (olmaması gereken bir durum) ama sentaks hatası biçiminde derleyicinin bir diagnostic mesaj verme zorunluluğu yok. 
+Mesela projeyi oluşturan 2 tane kaynak dosya olsa ; furkan.cpp - bora.cpp
 
 furkan .cpp
 ```C++
 void foo(int x){}
 ```
-
+Aynı projeye dahil bora.cpp'de böyle bir fonksiyon tanımlasam
 bora .cpp 
 ```C++
 void foo(int x){}
@@ -63,18 +65,16 @@ Ama böyle bir şey yaparsam ne olur sorusunun cevabı compile time’da hata al
 Derleyici furkan.cpp yi ayrı derliyor bora.cpp yi ayrı derliyor. 
 Dolayısıyla birden fazla kaynak dosyada birden fazla fonksiyonun tanımının bulunması bir sentaks hatası değil ama ill-formed. Linker bir hata verebilir fakat bazı durumlarda linker’da vermeyebilir. 
 
-Odr’i aynı kaynak dosyada ihlal ederseniz sentaks hatası. 
+ODR’i aynı kaynak dosyada ihlal ederseniz sentaks hatası. 
 
 // file1.cpp
 ```C++
 int x = 5;
-```
-// file1.cpp
-```C++
-int x= 5; // ODR ihlali, undefined behavior
+int x = 5; // ODR ihlali, sentaks hatası
 ```
 
 ODR ihlali. ODR aynı kaynak dosyada ihlal edildi. İll formed olmakla birlikte aynı zamanda sentaks hatası. 
+
 file1.cpp
 ```C++
 
@@ -89,56 +89,42 @@ Aynı kaynak dosyada ODR’ı ihlal ettiğimiz için sentaks hatası, derleyici 
 
 Farklı kaynak dosyalarda ODR’ı ihlal etsek bile derleyici bunun farkına varamaz. 
 
-Öyle durumlar var ki ,ODR görünürde ihlal edilmiş gibi görünmesine karşın orada istisnalar var. Bu istisnalar sayesinde ill-formed durumu oluşmuyor. 
+Öyle durumlar var ki, ODR görünürde ihlal edilmiş gibi görünmesine karşın orada istisnalar var. Bu istisnalar sayesinde ill-formed bir durum oluşmuyor. 
 
 Bunlardan bir tanesi sınıflara ilişkin. Eğer bir class definition birden fazla kaynak dosyada token by token aynıysa bu ODR ihlali sayılmıyor.
-token  by token ne demek ? 
-```C++
 
-class Nec {
-	int foo(int)
-	int bar(double)
-};
+//source1.cpp
+```C++
 class Nec {
 	int foo(int)
 	int bar(double)
 };
 ```
 
-token by token. Derleyici aynı şekilde tokenizing yapacak. 
-Bir sınıfın tanımını bir başlık dosyasına koymak kesinlikle ODR ihlali sayılmaz. 
+//source1.cpp
+```
+class Nec {
+	int foo(int)
+	int bar(double)
+};
+```
+
+token by token ne demek ? Derleyici aynı şekilde tokenizing yapacak. Derleyici açısından kodun en küçük birimine token denir. 
+Bir sınıfın tanımını bir başlık dosyasına koymak kesinlikle ODR ihlali sayılmaz. Çünkü include ile dahil edildiği için token by token aynı olmak zorundadır. Tanımsız davranış oluşturmaz.
+Koşullu derleme olayına dikkat etmek gerekir. 
+
 Fonksiyonlar kesinlikle ODR’a tabii. 
 Ben bir header file oluşturuyorum. 
-
 // neco.h
+
 ```C++
 
-void foo(int x )
+void foo(int x)
 {
 }
 ```
-
-ODR’ı ihlal etmek tanımsız davranış. 
-
-ODR violation. 
-
-Belirli varlıkların bildirimi birden fazla kez yazılabilir ama tanımı tek olmalı.
-Bu ihlal edilmemeli.
-
-
-Header içinde bunu tanımlarsak one definition rule bozmaya çok açık hale geliyor kod.
-bunu aynı projede 2 yada daha fazla kaynak dosya include ederse, aynı varlığın birden fazla tanımı olacak.Bu da UNDEFİNED BEHAVİOR.
-```C++
-
-void func(int x)
-{
-	
-}
-```
-
-Eğer class token by token diğer kaynak dosyalarda da varsa one definition rule ihlal edilmemiş oluyor.
-ÖR : Class definition header file a konursa ve bunu diğer modüller include ederse burada one definition rule ihlal edilmemiş oluyor.
-
+Başlık dosyasına böyle bir fonksiyonun tanımını koymak tanımsız davranış. ODR'ı ihlal etmiş oluyoruz. Ya aynı proje içinde birden fazla kaynak dosya neco.h'yı include ederse, işte o zaman ODR çiğnenmiş olur. 
+ODR’ı ihlal etmek tanımsız davranış. ODR violation = ODR ihlali. Fonksiyonun bildirimi birden fazla olabilir bunda bir sakınca yok ancak tanımlaması tek olmalıdır. Bu ihlal edilmemeli.
 
 Başlık dosyasına .h ile .hpp vermek arasında bir fark yok. Konvansiyonel olarak fark var. 
 
@@ -151,7 +137,7 @@ ODR ile konumuzun ne ilgisi var peki ?
 
 int foo(int x, int y)
 {
-	return x x + y y;
+	return x * x + y * y;
 }
 int bar(int a, int b)
 {
@@ -159,37 +145,28 @@ int bar(int a, int b)
 }
 ```
 
+Derleyici bir fonksiyon çağrısı ile karşılaştığında normal olarak ne yapıyor? 
+Fonksiyona giriş çıkış kodlarını üretiyor ve obje koda hangi fonksiyonu çağırdığına yönelik referans bir isim yazıyor. Çağrılan fonksiyon ile çağıran fonksiyonun bağlantısını yapmak linker programının görevi. Linker obje koddaki kendisine yönelik yazılmış referansları takip ederek bir fonksiyonun bir fonksiyonu çağırması durumunda o obje kodları birleştiriyor. 
 
-
-Derleyici bir fonksiyon çağrısı ile karşılaştığında normal olarak ne yapıyor ? fonksiyona giriş çıkış kodlarını üretiyor ve obje koda hangi fonksiyonu çağırdığına yönelik referans bir isim yazıyor. Çağrılan fonksiyon ile çağıran fonksiyonun bağlantısını yapmak linker programının görevi .Linker obje koddaki kendisine yönelik yazılmış referansları takip ederek bir fonksiyonun bir fonksiyonu çağırması durumunda o obje kodları birleştiriyor. 
-
-Böyle birr kod söz konusu söz olduğunda derleyici burada linker’a yönelik olarak oluşturacağı bar için oluşturacağı obje kodda linkera bir referens isim mi yazar ? hayır. 
-Eğer engelleyen herhangi bir engel yoksa derleyici inline expansion optimizasyonunu yapar. 
+Böyle bir kod söz konusu söz olduğunda derleyici burada linker’a yönelik olarak oluşturacağı bar için oluşturacağı obje kodda Linkera bir referens isim mi yazar ? Hayır. 
+Eğer engelleyen herhangi bir mekanizma yoksa derleyici inline expansion optimizasyonunu yapar. 
 
 inline optimizasyon, compiler optimization^un en önemli bileşeni. En önemlisi. 
 
-Hocanın yazdığı kodu buraya yaz. 
-
 Derleyici bu optimizasyonu yapmasa maliyet artar. 
-zero cost abstraction ağırlıklı olarak inline expansion’a dayanıyor. 
+Zero cost abstraction ağırlıklı olarak inline expansion’a dayanıyor. 
 inline expansionu disable edebilirsiniz. Bunların switchleri var. Debug sürecinde bir optimizasyonları disable etmeyi tercih ederiz. 
 
 Derleyicinin bu inline expansion dediğimiz optimizasyonu yapması hangi kriterlere bağlı ?
-Derleyicinin bunu yapmaktan bir fayda göreceğini bilmesi gerekiyor. Derleyici bir analiz yapıyor. 
-Derleyici analizi
-Bazı inline expansion durumları derleyiciden derleyiciye değişiyor. Yani derleyiciye bağlı
-Derleyici switchleri (neyi hedefliyorsunuz, code size ? zero optimization ?)
-Derleyicinin kodu görmesi gerekir. 
-
+* Derleyicinin bunu yapmaktan bir fayda göreceğini bilmesi gerekiyor. Derleyici bir analiz yapıyor. 
+* Bazı inline expansion durumları derleyiciden derleyiciye değişiyor. Yani derleyiciye bağlı
+* Derleyici switchleri (neyi hedefliyorsunuz, code size ? zero optimization ?)
+* Derleyicinin kodu görmesi gerekir. 
 
 Clang derleyici inline expansion optimizasyonu yapmış ama gcc derleyicisi yapamamış. Bu olabilir mi ? olabilir derleyicinin muktedir olması lazım. Derleyiciyi implemente edenlerin başarısı. 
 Mesela recursive bazı yapıları bazı derleyiciler inline expand edebiliyor ama bazılarının gücü yetmiyor. 
 
 Derleyici birçok durumda olduğu gibi fonksiyonun sadece bildirimi görseydi nereden bilsin ki inline expansion yapıp yapmayacağını ? fonksiyonun tanımını görmüyor. Fonksiyonun kodunu görmesi gerekiyor ama. 
-
-
-
-
 
 Buradaki inline anahtar sözcüğünün anlamı ne ?
 Bu tür fonksiyonlara inline function deniyor. 
@@ -212,11 +189,6 @@ Fonksiyonu inline yapmanız veya yapmamanız derleyicinin inline expansion yapma
 inline function ODR ile ilgili. Derleyicinin inline enpansion olanağını elde etmesi için fonksiyonun kodunu görmesi gerekir değil mi ? aksi mümkün değil. 
 
 Undefined behaviorun temel sebeplerinden biri compiler optimization'dur. Compilerın tek talebi kodda undefined behavior olmaması. 
-
-BURADAKİ TEKNİKLERE İNLİNE EXPANSİON DENİYOR.
-İNLİNE EXPANSİON  = BİR FONKSİYON ÇAĞRISI YAPILMIŞ FAKAT DERLEYİCİ NORMALDE FONKSİYON ÇAĞRISI KARŞILIĞINDA, 
-FONKSİYONA GİRİŞ(STACK DURUMU, FONKSİYONLARIN ARGÜMANLARININ PARAMETRELERE GEÇİRİLECEĞİ DEĞİŞKENLERİ, FONKSİYONUN RETURN DEĞERİNİN ADRESİ...), 
-FONKSİYONDAN ÇIKIŞ(STACK İN ESKİ HALE GETİRİLMESİ GİBİ ...) VE LİNKERDA BİR REFERANS İSİM YAZIYOR.
 
 Derleyicinin mutlaka fonksiyonun tanımını görmesi gerekmektedir. Bildirim değil. Tanım!!!!
 
@@ -242,9 +214,7 @@ Kodu herkese göstermiş oluyorum. Algoritmamı kimseye göstermek istemiyorum a
 Başlık dosyasına bir fonksiyonun inline fonksiyon olarak tanımını koyarsam ODR’ı ihlal etmemiş oluyorum. 
 External bir fonksiyonun tanımını başlık dosyasına koymanın yolu o fonksiyonu inline yapmak. Bu durumda ODR’ı ihlal etmemiş oluyoruz. Bu  başlık dosyasını include eden kodları derleyecek derleyiciye inline expansion optimizasyonu şansı veriyoruz. Bu şans kullanılmadığında isterse 100 tane kaynak dosya include etmiş olsun sentaks hatası olmayacak. 
 
-
 Peki ya inline etmezse ? dil bunu garanti ediyor. Kayıttan dinleyip yaz. 
-
 
 
 Sınıfların üye fonksiyonlarını da inline yapabilirim. Inline expensina en uygun olan sınıfın üye fonksiyonları. Kodu küçük, one liner fonksiyonlar. 
@@ -270,9 +240,7 @@ Inline’ı kullanırsanız inline expansion yapmayabilir.
 Eğer anlamı bu olsaydı Dünyanın en saçma anahtar sözcüğü olurdu :D 
 Gereksiz bir anahtar sözcük olurdu. Doğrusu bu değil. İnline function ODR ile ilgili bir konu. 
 
-
-
-derleyicinin inline expansion olanağını elde etmesi için fonksiyonun kodunu görmesi gerekir değil mi ? evet
+Derleyicinin inline expansion olanağını elde etmesi için fonksiyonun kodunu görmesi gerekir değil mi ? evet
 O zaman ben şimdi bir modül oluşturuyorum 
 //serhat .h 
 Burada client kodlar için bir interface var. 
@@ -288,7 +256,6 @@ pelin.cpp
 bora.cpp
 
 Böylece bu kaynak dosyalarda func’a yapılan çağrıda inline expansion uygulayabilir derleyici. Peki ya uygulamazsa ? o zaman link zamanına geldiğimiz zaman pelin.cpp’de bir func bora.cpp’de bir func olacak mı ? hayır. Dil bunu garanti ediyor. Link aşamasında sadece 1 tane instance olacak. 
-
 
 
 Adreslerin aynı olma garantisi var. Inline fonksiyonunun önemli bir özelliği bu. 
