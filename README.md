@@ -28,11 +28,9 @@ Inline anahtar kelimesinin derleyiciye fonksiyonu inline etme (fonksiyon çağr�
 //.h
 ```C++
 
-int x = 10;  
-void func()   
-{				// bu tanımlarda ODR ihlal ediliyor.ODR ihlal edilmesi Undefined behavior.
-				// bildirim birden çok olabilir ama tanım tek olmalı.
-}
+int x = 5; 
+int x= 5;  // bu tanımlarda ODR ihlal ediliyor.ODR ihlal edilmesi Undefined behavior.
+           // bildirim birden çok olabilir ama tanım tek olmalı
 ```
 
 Öyle varlıklar varki tanımlarının token by token aynı olması durumunda ODR ihlal edilmiyor.
