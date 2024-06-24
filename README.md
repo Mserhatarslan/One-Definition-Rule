@@ -55,6 +55,7 @@ furkan .cpp
 void foo(int x){}
 ```
 Aynı projeye dahil bora.cpp'de böyle bir fonksiyon tanımlasam
+
 bora .cpp 
 ```C++
 void foo(int x){}
