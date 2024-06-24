@@ -345,7 +345,8 @@ public:
 	void set(int a, int b);
 private:
 	int mx, my;
-};
+};```
+
 Sınıfların üye fonksiyonlarını da inline yapabilir miyim ? Evet, kesinlikle. Inline expansion'a en uygun olanlar neredeyse sınıfların üye fonksiyonları. Neredeyse bir garanti. Çoğu zaman one liner olan kodlar.
 Bu tür kodları kendi irademle inline expansion yapmak istiyorum. Bunu yapmanın bir yolu şu;
 * Fonksiyonun tanımını başlık dosyasına inline anahtar sözcüğü ile yazacaksınız.
@@ -362,7 +363,8 @@ public:
 
 private:
 	int mx, my;
-};
+};```
+
 Myclass sınıfının set fonksiyonu bir inline fonksiyon.
 Dilin kuralı diyor ki, eğer siz bir sınıfın static veya non static member functionunın tanımını sınıf içerisinde yaparsanız siz bu fonksiyonu implicitly inline yapmış oluyorsunuz. 
 
