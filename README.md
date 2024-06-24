@@ -452,7 +452,11 @@ inline void func() {
 
 Bu örnekte, inline fonksiyon func(), ODR'yi ihlal etmeden birden fazla çeviri biriminde tanımlanabilir, çünkü her tanım aynıdır.
 
-Non-inline Fonksiyonlar ve Değişkenler: Program genelinde yalnızca bir tanıma sahip olmalıdır.
+Non-inline Fonksiyonlar ve Değişkenler: 
+Program genelinde yalnızca bir tanıma sahip olmalıdır.
+
 Inline Fonksiyonlar ve Değişkenler: Birden fazla çeviri biriminde tanımlanabilir, ancak tanımlar aynı olmalıdır.
+
 Şablonlar: Inline fonksiyonlara benzer şekilde çalışır ve birden fazla aynı tanıma izin verir.
+
 Bu kurallara uymak, C++ programlarının derleme hatalarından kaçınmasını ve tutarlı bir şekilde çalışmasını sağlar.
