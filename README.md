@@ -253,49 +253,59 @@ Ben bir başlık dosyasına fonksiyonu inline fonksiyon olarak tanımını koyar
 External fonksiyonun tanımını başlık dosyasına koymanın yolu o fonksiyonu inline yapmak. ODR’i ihlal etmiş olmuyoruz. 
 
 Birden fazla kaynak dosya include etti. 
+
 pelin.cpp
 bora.cpp
 
-Böylece bu kaynak dosyalarda func’a yapılan çağrıda inline expansion uygulayabilir derleyici. Peki ya uygulamazsa ? o zaman link zamanına geldiğimiz zaman pelin.cpp’de bir func bora.cpp’de bir func olacak mı ? hayır. Dil bunu garanti ediyor. Link aşamasında sadece 1 tane instance olacak. 
+Böylece bu kaynak dosyalarda func’a yapılan çağrıda inline expansion uygulayabilir derleyici. Peki ya uygulamazsa ? O zaman link zamanına geldiğimiz zaman pelin.cpp’de bir func bora.cpp’de bir func olacak mı ? Hayır. Dil bunu garanti ediyor. Link aşamasında sadece 1 tane instance olacak. 
 
 
+// serhat.h 
+```C++
+inline int func(int x, int y)
+{
+	//
+}
+```
+
+//pelin.cpp
+```C++
+#include "serhat.h"
+void pel_func()
+{
+	auto fp = &func;
+}
+```
+// bora.cpp
+```C++
+#include "serhat.h"
+void bora_func()
+{
+	auto fp = &func;
+}
+```
+RUn time söz konusu olduğunda pel_func çağrıldığında fp'nin değeri olan adresle, bora_func çağrıldığında fp'nin değeri olan adresin aynı olma garantisi var. 
 Adreslerin aynı olma garantisi var. Inline fonksiyonunun önemli bir özelliği bu. 
 
-ODR ihlali yok 
-Derleyiciye optimizasyon şansı veriyorsunuz
-Aynı adres olması garanti altına alınıyor. 
-Bir başlık dosyam olsun, burada fonksiyonu bildirirken 
+Siz bir fonksiyonun tanımmını başlık dosyasına inline kullanarak eklerseniz; 
 
-Sentaks hatası yok. 
-
-
-Sentaks hatası yok. İnline anahtar sözcüğünün bir kere geçmesi yeterli. 
+* ODR ihlali yok 
+* Derleyiciye optimizasyon şansı veriyorsunuz
+* Aynı adres olması garanti altına alınıyor. Link aşamasında 1 tane func olarak ele alacak. 
 
 
-Sınıfların üye fonksiyonlarını da inline yapabilir miyim ? Evet. 
-Derleyiciye inline expansion yapma şansı vermek istiyorum. 
+Bir başlık dosyam olsun, bora.h 
+Burada fonksiyonu bildirirken 
 
-Bunun birkaç yolu var. 
-Yollardan biri şu, fonksiyonun tanımını başlık dosyasına inline anahtar sözcüğü ile koyacaksınız. 
+```
+int foo(int, int)
+inline int foo(int x, int y)
+```
+Sentaks hatası yok. Bildirimde veya tanımda inline anahtar sözcüğünün bir kere geçmesi yeterli. 
 
-
-
-
-
-Inline fonksiyon mu ? evet. Ama inline yok ? olsun. 
-Dilin kuralı diyor ki, eğer siz bir sınıfın static veya non static member function’unu tanımını sınıf içinde yaparsınız implicit inline yapmış oluyorsunuz. 
-set fonksiyonu inline fonksiyon. 
 
 Bundan sonraki kodların çok büyük çoğunluğunda zaman ekonomisi için fonksiyonların hemen hepsini inline olarak tanımlicam yani sınıf içinde tanımlıcam. Ama bu yanlış bir intiba vermesin. Üretimde hep böyle yapılmaz. Başlık dosyası ile uğraşmamak için. 
 
-
-Inline fonksiyonların ODR ile olan ilişkisini gördük. 
-
-//bora.h
-
-Inline fonksiyon mu ? hayır. 
-ODR ihlaline yol açar mı ? açar. 
-Birden fazla kaynak dosya bu başlık dosyasını include ettiğinde ODR ihlaline yol açar. 
 
 ```C++
 constexpr int foo(int x, int y)
@@ -340,13 +350,6 @@ Myclass sınıfının set fonksiyonu bir inline fonksiyon.
 Dilin kuralı diyor ki, eğer siz bir sınıfın static veya non static member functionunın tanımını sınıf içerisinde yaparsanız siz bu fonksiyonu implicitly inline yapmış oluyorsunuz. 
 
 
-
-
-
-
-
-
-
 ```C++
 class Myclass {
 public:
@@ -388,11 +391,6 @@ Fonksiyonun static olması implicit inline olduğu anlamına gelmiyor. Ama ODR�
 
 ODR ihlali olur mu ? Hayır. Çünkü bu internal linkage’ ait. 
 Static olması durumunda; bu kaynak dosyayı include eden her kaynak dosyada ayrı bir foo fonksiyonu olacak. Caner.cpp bu foo fonksiyonun adresini kullansa, ahmet.cpp’de bu foo fonksiyonunun adresini kullansa bunlar ayrı adresler olacak. 
-
-
-
-
-
 
 
 // header.h
