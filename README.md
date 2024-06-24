@@ -1,7 +1,7 @@
 # One-Definition-Rule
 
 C++ dilinde "One Definition Rule" (ODR) olarak bilinen kural, bir programda her bir nesnenin, fonksiyonun, sınıfın, şablonun ve inline fonksiyonun yalnızca bir tanımının olması gerektiğini belirtir. 
-ODR'nin amacı, belirsizlikleri ve çakışmaları önleyerek programın tutarlılığını ve düzgün çalışmasını sağlamaktır. Yazılımsal bazı varlıkların proje içinde  birden fazla bildirimi olabilir ama bir tanımlaması olması gerekir. Tek bir tanımlaması olması zorunludur. 
+ODR'nin amacı, belirsizlikleri ve çakışmaları önleyerek programın tutarlılığını ve daha doğru çalışmasını sağlamaktır. Yazılımsal bazı varlıkların proje içinde  birden fazla bildirimi olabilir ama bir tanımlaması olması gerekir. Tek bir tanımlaması olması zorunludur. 
 
 C++ standartlarının da  kullandığı bir terimdir.
 
