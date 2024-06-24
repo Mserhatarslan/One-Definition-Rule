@@ -392,38 +392,3 @@ Fonksiyonun static olması implicit inline olduğu anlamına gelmiyor. Ama ODR�
 ODR ihlali olur mu ? Hayır. Çünkü bu internal linkage’ ait. 
 Static olması durumunda; bu kaynak dosyayı include eden her kaynak dosyada ayrı bir foo fonksiyonu olacak. Caner.cpp bu foo fonksiyonun adresini kullansa, ahmet.cpp’de bu foo fonksiyonunun adresini kullansa bunlar ayrı adresler olacak. 
 
-
-// header.h
-```C++
-
-#ifndef HEADER_H
-#define HEADER_H
-inline void func() {
-    // Fonksiyon gövdesi
-}
-#endif // HEADER_H
-```
-
-// file1.cpp
-```C++
-
-#include "header.h"
-```
-
-// file2.cpp
-```
-
-#include "header.h"
-```
-
-
-Bu örnekte, inline fonksiyon func(), ODR'yi ihlal etmeden birden fazla çeviri biriminde tanımlanabilir, çünkü her tanım aynıdır.
-
-Non-inline Fonksiyonlar ve Değişkenler: 
-Program genelinde yalnızca bir tanıma sahip olmalıdır.
-
-Inline Fonksiyonlar ve Değişkenler: Birden fazla çeviri biriminde tanımlanabilir, ancak tanımlar aynı olmalıdır.
-
-Şablonlar: Inline fonksiyonlara benzer şekilde çalışır ve birden fazla aynı tanıma izin verir.
-
-Bu kurallara uymak, C++ programlarının derleme hatalarından kaçınmasını ve tutarlı bir şekilde çalışmasını sağlar.
