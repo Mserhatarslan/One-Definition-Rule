@@ -32,7 +32,7 @@ Inline anahtar kelimesinin derleyiciye fonksiyonu inline etme (fonksiyon çağr�
 ```C++
 
 int x = 5; 
-int x= 5;  // bu tanımlarda ODR ihlal ediliyor.ODR ihlal edilmesi Undefined behavior.
+int x = 5;  // bu tanımlarda ODR ihlal ediliyor.ODR ihlal edilmesi Undefined behavior.
            // bildirim birden çok olabilir ama tanım tek olmalı
 ```
 
