@@ -36,7 +36,7 @@ int x = 5;  // bu tanımlarda ODR ihlal ediliyor.ODR ihlal edilmesi Undefined be
            // bildirim birden çok olabilir ama tanım tek olmalı
 ```
 
-Öyle varlıklar varki tanımlarının token by token aynı olması durumunda ODR ihlal edilmiyor.
+Öyle varlıklar var ki tanımlarının token by token aynı olması durumunda ODR ihlal edilmiyor.
 ```C++
 
 void func(int x)
